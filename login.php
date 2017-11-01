@@ -1,51 +1,52 @@
 <?php
-include_once 'database/connection.php';
-include_once 'database/utilities.php';
-include_once 'database/session.php';
+include_once 'config/database.php';
 
-if(isset($_POST['login'])) {
+session_start();
 
-    $form_errors = array();
-    
-    $required_fields = array('email', 'password');
-    
-    $form_errors = array_merge($form_errors, check_empty_fields($required_fields));
-     
-    if(empty($form_errors)){
-
-       $email = $_POST['email'];
-        $password = $_POST['password'];
-        
-        $sqlQuery = "SELECT * FROM users WHERE email = :email";
-        $stmt = $conn->prepare($sqlQuery);
-       // echo "error";
-       // header("location: home.php?sig=error");
-        $stmt->execute(array(':email' => $email));
-        while($row = $stmt->fetch()){
-            $id = $row['id'];
-            $hashed_password = $row['password'];
-            $email = $row['email'];
-
-            if(password_verify($password, $hashed_password)){
-                $_SESSION['id'] = $id;
-                $_SESSION['email'] = $email;
-                header("location: home.php");
-
-            }else{
-                $result = "<p style='padding: 20px; color: red'>Invelid email or password</p>";
+    try
+    {
+        if (isset($_POST['login']))
+        {
+            
+            if (empty($_POST['email']) || empty($_POST['password']))
+            {
+                echo "<script type='text/javascript'>alert('Username or Password empty or invalid');</script>";
             }
-        }
-        
-    }else{
-        if(count($form_errors) == 1){
-            $result = "<p style='color: red;'>There was one error in the form </p>";
-    
-        }else{
-            $result = "<p style='color: red;'>There were".count($form_errors).  "error in the form </p>";
+            else
+            {
+                $email = $_POST['email'];
+                $password = $_POST["password"];
+
+                $query = "SELECT * FROM users WHERE email = :email";
+                $stmt = $conn->prepare($query);
+                $stmt->execute(array(':email' => $email));
+                
+                while ($row = $stmt->fetch(PDO::FETCH_ASSOC))
+                {
+                    $mail = $row['email'];
+                    $hash_pass = $row['password'];
+                    if (password_verify($password, $hash_pass))
+                    {
+                        $_SESSION["username"] = $row['username'];
+                        $_SESSION["password"] = $hash_pass;
+                        header("location: home.php");
+                    }
+                    else
+                    {
+                        echo "<script type='text/javascript'>alert('Please verify data');</script>";
+                    }
+                }
+            }
+            
         }
     }
-}
+    catch (PDOException $e) 
+    {
+        echo $database.'<br>'.$e->getMessage();
+    }
 ?>
+
+
 <!DOCTYPE html>
 
 <HTML>
@@ -58,15 +59,13 @@ if(isset($_POST['login'])) {
 
     <i class="material-icons" style="font-size:50px">camera</i>
             <div class="material-icons header"><h1>CAMAGRU</h1></div>
-           <?php if(isset($result)) echo $results; ?>
-            <?php if (!empty($form_errors)) echo show_errors($form_errors); ?>
-         
+          
             <center><div class="container">
             
                 <div class="head1"><h1>LOGIN</h1></div>
                 <div class="head2"><p>with Email</p></div>
-            <form method="post" action="home.php">
-                <input type="text" name="email" value="" placeholder="Email Address" required><br>
+            <form method="post" action="login.php">
+                <input type="email" name="email" value="" placeholder="Email Address" required><br>
                 <input type="password" name="password" value="" placeholder="Password" required><br><br>
                 <button type="submit" name="login"  value="Submit" >Submit</button><br>
                 <button type="signup" value="Submit"  onclick="window.location.href='signup.php'">SignUp</button>

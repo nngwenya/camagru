@@ -12,28 +12,24 @@
     <header>
             <i class="material-icons" style="font-size:50px">camera</i>
             <div class="material-icons header"><h1>CAMAGRU</h1></div>   
-            <button class="logout" onclick="window.location.href='index.php'" >LogOut</button>   
+            
           
     </header>
  
     <div class="content">
         <ul>
-            <li><a class="footer1" href="home.php">HOME</a></li>
-            <li><a class="footer1" href="gallary">MY GALLARY</a></li>
-            <li><a class="footer1" href="signup.php">FRAMES</a></li>
-              
+            <li><a class="footer1" href="home.php">WELCOME TO CAMAGRU, A LIFE CHANGING WEBSITE</a></li>
+           
         </ul>
     </div>
 
-    <p>You are currently not registered <a href="login.php">login</a> Not yet a member? <a href="signup.php">Signup</a> </p>
-    
-
-    <p You are logged in as  <?php if(!isset($_SESSION['email'])) echo $_SESSION['email']; ?> <a href="logout"</a></p>
+    <p>You are currently not registered <a href="login.php">login</a>  Not yet a member? <a href="signup.php">Signup</a> </p>
 
         <br>
-    <div class="booth">
-        <video id="video" width="600" height="450"></video><br/>
-        <center><div class="material-icons capturebutton" style="font-size:40px" href="#" id="capture">camera_alt</button></center>
+        <BODY class="indexb">
+
+        <center><img src="http://jeanporter.cmswiki.wikispaces.net/file/view/animated_welcome--feather_pen_writing.gif/258773440/373x94/animated_welcome--feather_pen_writing.gif" width="700" height="350"></center><br/>
+        
     </div><br>
                 
 </BODY>

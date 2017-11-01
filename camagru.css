@@ -4,12 +4,21 @@ body {
     margin: auto;
 }
 
-.header,
 .material-icons {
     margin-top: -30px;
     margin-bottom: -30px;
-    font-size: 19px;
-    background: -webkit-linear-gradient(pink, black);
+    font-size: 30px;
+    background: -webkit-linear-gradient(rgb(219, 110, 130), black);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.header {
+    margin-top: -30px;
+    margin-bottom: -30px;
+    font-size: 30px;
+    background: -webkit-linear-gradient(rgb(219, 110, 130), black);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -19,17 +28,13 @@ body {
     /* margin-top: -20px ;*/
     margin-bottom: 50px;
     /*border: 2px solid linear-gradient(180deg, black, pink);*/
-    font-size: 15px;
-    background: -webkit-linear-gradient(pink, black);
+    font-size: 17px;
+    background: -webkit-linear-gradient(rgb(219, 110, 130), black);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
     float: right;
     border-radius: 5px;
-}
-
-.backgroundlog {
-    width: 100%;
 }
 
 .footer1 {
@@ -44,28 +49,45 @@ body {
 .ul {
     border: 2px solid black;
     background-color: pink;
-    padding: 20px;
+    padding: 30px;
     font-size: 10%;
 }
 
 .content {
     position: relative;
-    background-color: #FFE4E1;
-    height: 50px;
+    background-color: pink;
+    height: 70px;
+    margin-top: 20px;
+}
+
+.content2 {
+    background-color: pink;
+    height: 70px;
+    margin-top: 10px;
+}
+
+.icons {
+    margin-left: right;
+    display: inline-block;
+    float: right;
+    margin-top: -5px;
 }
 
 .content li {
     display: inline-block;
-    margin-top: 15px;
+    margin-top: 25px;
 }
 
 .booth {
-    width: 600px;
-    height: 450px;
+    float: left;
+    width: 800px;
+    height: 600px;
     background-color: #FFE4E1;
     border: 6px solid powderblue;
-    margin: 0 auto;
+    margin: 60px;
+    padding: 10px;
     border-radius: 5px;
+    margin-right: 60px;
     position: relative;
 }
 
@@ -113,7 +135,7 @@ button {
 }
 
 .head1 {
-    background: -webkit-linear-gradient(pink, black);
+    background: -webkit-linear-gradient(rgb(219, 110, 130), black);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     text-align: center;
@@ -139,21 +161,22 @@ button {
     top: 70%;
 }
 
-canvas {
+.myimage {
     width: 400px;
     height: 300px;
+    padding: 5px;
+    margin: 50px;
+    /*margin-top: 15px; */
+    margin-right: 50px;
+    margin-bottom: -10px;
     background-color: #FFE4E1;
     border: 6px solid powderblue;
-    margin-bottom: -90px;
     float: right;
-    top: 200%;
-    /* position: right; */
     border-radius: 5px;
-    align: right;
 }
 
 .bgi {
-    background-image: url("https://i.pinimg.com/originals/33/75/b0/3375b062b2abf2a919e8b821013a1355.gif");
+    background-image: url("http://www.hypnosis-in-london.com/wp-content/uploads/2014/01/pink-bg.jpg");
     background-repeat: no-repeat;
     background-size: 100%;
 }
@@ -171,6 +194,33 @@ canvas {
     top: 40%;
     left: 50%;
     transform: translate(-55%, -55%);
+}
+
+.indexb {
+    background-image: url("http://1.bp.blogspot.com/-lSV0VPW7cjg/U2trV0ZZf6I/AAAAAAAACIE/cDDaD8lkzDk/s1600/Default+U1404+Wallpaper.jpg");
+    background-repeat: no-repeat;
+    background-size: 100%;
+}
+
+.gallary li {
+    background-color: #E0FFFF;
+    border-radius: 5px;
+    width: 300px;
+    height: 300px;
+    border: 6px solid powderblue;
+    margin: 20px;
+    float: left;
+    display: block;
+    padding: 20px;
+}
+
+.gallary ul {
+    list-style: none;
+    position: center;
+}
+
+section {
+    background-color: rgba(255, 192, 205, 0.452);
 }
 
 

@@ -1,9 +1,8 @@
 <?php
 
-    include_once 'database/connection.php';
-    include_once 'database/utilities.php';
+include_once 'config/database.php';
+include_once 'config/utilities.php';
 //include_once 'database/session.php';
-//include_once "database/confirmemail";
     
    
     //Proccess the form
@@ -36,7 +35,7 @@
             //Collect form data and store in variables
             $firstname= $_POST['firstname'];
             $lastname = $_POST['lastname'];
-            $username = $_POST['username'];
+            $usern = $_POST['username'];
             $email = $_POST['email'];
             $password = $_POST['password'];
             $country = $_POST['country'];
@@ -44,6 +43,8 @@
             //hashing password
 
             $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+            $usern = substr($firstname, 0, 1) . $lastname;
+        
 
             try{
 
@@ -60,7 +61,7 @@
                  $stmt->execute(array(
                     ':firstname' => $firstname,
                     ':lastname' => $lastname,
-                    ':username' => $username,
+                    ':username' => $usern,
                     ':email' => $email,
                     ':password' => $hashedPassword,
                     ':country' => $country
@@ -68,6 +69,21 @@
 
                 //check if one new was created
                 if ($stmt->rowCount() == 1){
+                 
+                    $to=$email;
+                    $msg= "Thanks for new Registration.";   
+                    $subject="Email Verification";
+                    $headers .= "MIME-Version: 1.0"."\r\n";
+                    $headers .= 'Content-type: text/html; charset=iso-8859-1'."\r\n";
+                    $headers .= 'From:camagru <gwengwenya@gmail.com>'."\r\n";
+                                    
+                    $ms.="<html></body><div><div>Dear $nam,</div></br></br>";
+                    $ms.="<div style='padding-top:8px;'>Your account information is successfully updated in our server, Please click the following link For verifying and activate your account.</div>
+                        <div style='padding-top:10px;'><a href='http://localhost:8080/camagru/login.php'>Click Here</a></div>
+                        </div>
+                        </body></html>";
+                    mail($to,$subject,$ms,$headers);
+
                     $result = "<p style='padding: 20px; color: green;'> Registration Successful </p>";
                 }
                 
@@ -76,6 +92,7 @@
             }
 
          }
+
 }
 
 ?>
@@ -89,7 +106,7 @@
         <link rel="stylesheet" type="text/css" href="camagru.css"/>
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     </HEAD>
-    <BODY class="bgi">
+    <BODY class="indexb">
     
    
             <i class="material-icons" style="font-size:50px">camera</i>
