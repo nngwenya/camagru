@@ -1,14 +1,15 @@
 <?php
 include_once 'config/database.php';
 session_start();
-$password = '';
-$firstname = '';
-$lasttname = '';
-$username = '';
-$email = '';
+
+// $password = '';
+// $firstname = '';
+// $lasttname = '';
+// $username = '';
+// $email = '';
 if (isset($_POST["btnsave"]))
 {
-    $img_file = $_FILES['user_image']["name"];
+    $img_file = $_FILES["user_image"]["name"];
     $validext = array("jpg", "png", "bmp", "gif");
 
     if($img_file == " ")
@@ -30,8 +31,7 @@ if (isset($_POST["btnsave"]))
        
 
         {
-           // $conn->query( "INSERT INTO usersimage (ID, image_name, edit_time, image, username)
-         //   VALUES (null, $file_name, 'CURRENT_DATE', ".($filepath).", 'username'");
+       
          $sqlInsert = ("UPDATE users SET profile_image='$filepath' WHERE username=':username'");
          
          $stmt = $conn->prepare($sqlInsert);
@@ -41,7 +41,7 @@ if (isset($_POST["btnsave"]))
         echo "image uploaded succssfully";
         }
 else
-        echo "could not upload the image";
+        echo "the image could not upload";
 }
 }
 ?>
@@ -52,6 +52,7 @@ else
         <TITLE>my account</TITLE>
         <link rel="stylesheet" type="text/css" href="myaccount.css"/>
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     </HEAD>
@@ -70,44 +71,44 @@ else
     </div>
 
 </br>
-<div class="phoneimg">
+ <!-- <div class="phoneimg">
     <img src="https://ting.com/wp-content/uploads/Android-Guest-Mode-GIF04.gif"></div>
-
+ -->
 
 <div class="container1">
 <div class="head1"><h1>MY ACCOUNT</h1></div>
-<center><form method="post" enctype="multipart/form-data" class="form-horizontal">
+<center><form method="POST" enctype="multipart/form-data" class="form-horizontal" action"">
      
  <table class="table table-bordered table-responsive">
  
     <tr>
      <td><label class="control-label">firstname:</label></td>
-        <td><input class="form-control" type="text" name="firstname" placeholder="firstname" value="<?php echo $firstname; ?>" /></td>
+        <td><input class="form-control" type="text" name="firstname" placeholder="firstname" value="" /></td>
     </tr>
 
     <tr>
      <td><label class="control-label">lastname:</label></td>
-        <td><input class="form-control" type="text" name="lastname" placeholder="lastname" value="<?php echo $lasttname; ?>" /></td>
+        <td><input class="form-control" type="text" name="lastname" placeholder="lastname" value="" /></td>
     </tr>
     
     <tr>
      <td><label class="control-label">username:</label></td>
-        <td><input class="form-control" type="text" name="username" placeholder="username" value="<?php echo $username; ?>" /></td>
+        <td><input class="form-control" type="text" name="username" placeholder="username" value="" /></td>
     </tr>
 
     <tr>
      <td><label class="control-label">email:</label></td>
-        <td><input class="form-control" type="text" name="email" placeholder="email" value="<?php echo $email; ?>" /></td>
+        <td><input class="form-control" type="text" name="email" placeholder="email" value="" /></td>
     </tr>
 
     <tr>
      <td><label class="control-label">password:</label></td>
-        <td><input class="form-control" type="Password" name="password" placeholder="password" value="<?php echo $password; ?>" /></td>
+        <td><input class="form-control" type="Password" name="password" placeholder="password" value="" /></td>
     </tr>
     
     <tr>
-     <td><label class="control-label">confirm_password:</label></td>
-        <td><input class="form-control" type="password" name="password" placeholder="confirm_password" value="<?php echo $password; ?>" /></td>
+     <td><label class="control-label">country:</label></td>
+        <td><input class="form-control" type="text" name="country" placeholder="country" value="" /></td>
     </tr>
 
     <tr>
@@ -126,13 +127,55 @@ else
     
 </form></center>
 <center><p>deactivate my account <a style='color: pink; font-size:30px;'  value="deactivate" name="deactivate" onclick="window.location.href='index.php'" class="  fa fa-close" href='#'></i></a></center>
-</div>
+</div>  
+
+<?php
+
+
+try{
+    $firstname= $_POST['firstname'];
+    $lastname = $_POST['lastname'];
+    $usern = $_POST['username'];
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+    //$country = $_POST['country'];
+    $username = $_SESSION['username'];
+
+     $hashed_password = password_hash($password, PASSWORD_BCRYPT);
+        
+
+
+    $sqlInsert = ("UPDATE users SET firstname=':firstname', lastname=':lastname', username=':username', email=':email', password=':hashed_password', country=':country'  WHERE id=':id'");
+            
+    $stmt = $conn->prepare($sqlInsert);
+    $stmt->bindParam(':firstname', $firstname);
+    $stmt->bindParam(':lastname', $lastname);
+    $stmt->bindParam(':username', $username);
+    $stmt->bindParam(':email', $email);
+    $stmt->bindParam(':hashed_password', $hashed_password);
+    $stmt->bindParam(':country', $country);
+    $stmt->bindParam(':id', $id);
+    $stmt->execute();
+
+    echo "update was succssfully";
+}
+catch (PDOException $e) 
+{
+    echo $sqlInsert.'<br>'.$e->getMessage();
+    echo "update failed";
+}
+
+
+?>
 
 <?php
  
-
- $stmt = $conn->prepare("SELECT profile_image, username FROM users ");
+ $stmt = $conn->prepare("SELECT profile_image, username, email FROM users WHERE username LIKE :user");
+ $stmt->bindParam(":user",$_SESSION['username']);
  $stmt->execute();
+
+
+
  if($stmt->rowCount() > 0)
  {
   while($row=$stmt->fetch(PDO::FETCH_ASSOC))
@@ -140,16 +183,16 @@ else
     
     extract($row);
    ?>
-<div class="col-xs-3">
-        <p class="page-header"><?php echo $username."&nbsp;/&nbsp;".$email; ?></p>
+<div class="profile">
+<center><p class="page-header"><?php echo $username."&nbsp;/&nbsp;".$email; ?></p>
        
-        <img src='<?php echo $filepath;?>' class="img-rounded" width="250px" height="250px"/>
+        <img src='<?php echo $filepath;?>' class="img-rounded" width="250px" height="300px"/>
         <p class="page-header">
         <span>
-    <a class="btn btn-info" href="editform.php?edit_id=<?php echo $row['username']; ?>" title="click for edit" onclick="return confirm('sure to edit ?')"><span class="glyphicon glyphicon-edit"></span> Edit</a> 
-    <a class="btn btn-danger" href="?delete_id=<?php echo $row['username']; ?>" title="click for delete" onclick="return confirm('sure to delete ?')"><span class="glyphicon glyphicon-remove-circle"></span> Delete</a>
+    <a class="usersimage" href="mygallary.php?edit_id=<?php echo $row['username']; ?>" title="click for edit" onclick="return confirm('sure to edit ?')"><span class="glyphicon glyphicon-edit"></span> Edit</a> 
+    <a class="usersimage" href="?delete_id=<?php echo $row['username']; ?>" title="click for delete" onclick="return confirm('sure to delete ?')"><span class="glyphicon glyphicon-remove-circle"></span> Delete</a>
     </span>
-    </p>
+    </p></center>
     </div>
     <?php
   }
@@ -164,8 +207,12 @@ else
         </div>
         <?php
  }
+
  ?>
+
+
 </div>
+
 </BODY>
 </HTML>
 

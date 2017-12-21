@@ -5,6 +5,7 @@
     <TITLE>camagru.com</TITLE>
     <link rel="stylesheet" type="text/css" href="camagru.css"/>
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
  
     </HEAD>
@@ -31,6 +32,8 @@
         <center><img src="http://jeanporter.cmswiki.wikispaces.net/file/view/animated_welcome--feather_pen_writing.gif/258773440/373x94/animated_welcome--feather_pen_writing.gif" width="700" height="350"></center><br/>
         
     </div><br>
-                
+               
+    <div class="footer">
+                <footer><p><i>Copyright &copy; nngwenya 2017.All rights reserved.</i></p></footer>
 </BODY>
 </HTML>

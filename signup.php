@@ -6,7 +6,9 @@ include_once 'config/utilities.php';
     
    
     //Proccess the form
-
+    $email = isset($_POST['email']) ? $_POST['email'] : '';
+    $headers = isset($_POST['headers']) ? $_POST['headers'] : '';
+    $ms = isset($_POST['ms']) ? $_POST['ms'] : '';
     if (isset($_POST['signup'])){
 
         //initialise an array to store any error message from the form
@@ -70,19 +72,24 @@ include_once 'config/utilities.php';
                 //check if one new was created
                 if ($stmt->rowCount() == 1){
                  
-                    $to=$email;
-                    $msg= "Thanks for new Registration.";   
-                    $subject="Email Verification";
-                    $headers .= "MIME-Version: 1.0"."\r\n";
-                    $headers .= 'Content-type: text/html; charset=iso-8859-1'."\r\n";
-                    $headers .= 'From:camagru <gwengwenya@gmail.com>'."\r\n";
+                     $to=$email;
+                     $msg= "Thanks for new Registration.";   
+                     $subject="Email Verification";
+                     $headers .= "MIME-Version: 1.0"."\r\n";
+                     $headers .= 'Content-type: text/html; charset=iso-8859-1'."\r\n";
+                     $headers .= 'From:camagru <gwengwenya@gmail.com>'."\r\n";
                                     
-                    $ms.="<html></body><div><div>Dear $nam,</div></br></br>";
-                    $ms.="<div style='padding-top:8px;'>Your account information is successfully updated in our server, Please click the following link For verifying and activate your account.</div>
-                        <div style='padding-top:10px;'><a href='http://localhost:8080/camagru/login.php'>Click Here</a></div>
-                        </div>
-                        </body></html>";
-                    mail($to,$subject,$ms,$headers);
+                     $ms.="<html></body><div><div>Dear ".$usern.",</div></br></br>";
+                     $ms.="<div style='padding-top:8px;'>Your account information is successfully updated in our server, Please click the following link For verifying and activate your account.</div>
+                     <br>\n\nYour username : ".$usern.".\r\n<br>
+                     \n\nYour password : ".$password.".
+                    <div style='padding-top:10px;'><a href='http://localhost:8080/camagru/login.php'>Click Here</a></div>
+
+                    <br>Thank you for registering with us.<br>
+                       
+                         </div>
+                         </body></html>";
+                     mail($to,$subject,$ms,$headers); 
 
                     $result = "<p style='padding: 20px; color: green;'> Registration Successful </p>";
                 }
@@ -129,15 +136,16 @@ include_once 'config/utilities.php';
                   <input type="text" name="email"  placeholder="Email" required><br>
                   Password:<br>
                   <input type="password" name="password"  placeholder="*********" required><br>
-                  <!--<div class="head"><p>Gender:</p></div>
-                  <div class="head"><input style="width: 25px" type="radio" name="gender" value="male"  checked required>Female<br>
-                  <div class="head"><input style="width: 25px"  type="radio" name="gender" value="female"required>Male<br> -->
+                 
                     Your Country:<br> 
                     <input type="text" name="country"  placeholder="country" required><br><br>
-                  <button type="submit" name="signup" value="signup">Register</button>
-                  <div class="footer"><a href="http://localhost:8080/camagru/forgot_password.php">forgot my password ?</a></div></center>
+                  <button type="submit" name="signup" value="signup">Register</button><br>
+                  <a href="http://localhost:8080/camagru/forgot_password2.php">forgot my password ?</a></div></center>
               </form>
-       
               </div>
+            
+           
 </BODY>
+              <!-- <div class="footer">
+                  <p><i>Copyright &copy; nngwenya 2017.All rights reserved.</i></p></div> -->
 </HTML>

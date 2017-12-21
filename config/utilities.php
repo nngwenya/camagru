@@ -46,7 +46,7 @@ function check_email($data){
             }
         }
     }
-    return  $form_errors;
+    return $form_errors;
 }
 
 function show_errors($form_errors_array){
