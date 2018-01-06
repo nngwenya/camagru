@@ -79,11 +79,12 @@ include_once 'config/utilities.php';
                      $headers .= 'Content-type: text/html; charset=iso-8859-1'."\r\n";
                      $headers .= 'From:camagru <gwengwenya@gmail.com>'."\r\n";
                                     
-                     $ms.="<html></body><div><div>Dear ".$usern.",</div></br></br>";
+                     $ms.="<html></body><div><div>Dear ".$firstname.",</div></br></br>";
                      $ms.="<div style='padding-top:8px;'>Your account information is successfully updated in our server, Please click the following link For verifying and activate your account.</div>
                      <br>\n\nYour username : ".$usern.".\r\n<br>
-                     \n\nYour password : ".$password.".
-                    <div style='padding-top:10px;'><a href='http://localhost:8080/camagru/login.php'>Click Here</a></div>
+                     \n\nYour password : ".$password.".<br><br>\r\n
+                    Click Here :
+                    http://localhost:8080/Camagru/login.php
 
                     <br>Thank you for registering with us.<br>
                        

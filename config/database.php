@@ -1,5 +1,6 @@
 
 <?php
+//include_once 'setup.php';
 //initialize variable to hold connection parameters.
 $username = 'root';
 $dsn = 'mysql:host=localhost;dbname=camagru;port=8080';

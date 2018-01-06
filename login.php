@@ -69,7 +69,7 @@ session_start();
                 <input type="password" name="password" value="" placeholder="Password" required><br><br>
                 <button type="submit" name="login"  value="Submit" >Submit</button><br>
                 <button type="signup" value="Submit"  onclick="window.location.href='signup.php'">SignUp</button>
-                <div class="footer"><a href="http://localhost:8080/camagru/forgot_password2.php">forgot my password ?</a></div>
+                <div><a href="http://localhost:8080/camagru/forgot_password2.php">forgot my password ?</a></div>
             </form>
             </div>
             

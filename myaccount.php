@@ -1,6 +1,6 @@
 <?php
 include_once 'config/database.php';
-session_start();
+include_once 'config/session.php';
 
 // $password = '';
 // $firstname = '';
@@ -71,9 +71,9 @@ else
     </div>
 
 </br>
- <!-- <div class="phoneimg">
+  <div class="phoneimg">
     <img src="https://ting.com/wp-content/uploads/Android-Guest-Mode-GIF04.gif"></div>
- -->
+ 
 
 <div class="container1">
 <div class="head1"><h1>MY ACCOUNT</h1></div>
@@ -133,13 +133,13 @@ else
 
 
 try{
-    $firstname= $_POST['firstname'];
-    $lastname = $_POST['lastname'];
-    $usern = $_POST['username'];
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-    //$country = $_POST['country'];
-    $username = $_SESSION['username'];
+    // $firstname= $_POST['firstname'];
+    // $lastname = $_POST['lastname'];
+    // $usern = $_POST['username'];
+    // $email = $_POST['email'];
+    // $password = $_POST['password'];
+    // //$country = $_POST['country'];
+    // $username = $_SESSION['username'];
 
      $hashed_password = password_hash($password, PASSWORD_BCRYPT);
         
@@ -159,9 +159,9 @@ try{
 
     echo "update was succssfully";
 }
-catch (PDOException $e) 
+catch (PDOException $ex) 
 {
-    echo $sqlInsert.'<br>'.$e->getMessage();
+    echo $sqlInsert.'<br>'.$ex->getMessage();
     echo "update failed";
 }
 

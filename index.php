@@ -32,8 +32,6 @@
         <center><img src="http://jeanporter.cmswiki.wikispaces.net/file/view/animated_welcome--feather_pen_writing.gif/258773440/373x94/animated_welcome--feather_pen_writing.gif" width="700" height="350"></center><br/>
         
     </div><br>
-               
-    <div class="footer">
-                <footer><p><i>Copyright &copy; nngwenya 2017.All rights reserved.</i></p></footer>
+            
 </BODY>
 </HTML>

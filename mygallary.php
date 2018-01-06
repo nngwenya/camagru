@@ -29,9 +29,6 @@ require_once ('config/database.php');
             <center><HEADER>WELCOME TO MY GALLARY</HEADER></center> </div>
           
     </header>
-        
-
-    <div class="post">
    
       
 <?php 
@@ -72,14 +69,14 @@ foreach($images as $image)
                     <?php if ($_SESSION['username'] == $image['username']) {?>
                     <a class=del href="?delete_id=<?php echo $image['image_name']?>" action="delete.php" type='submit' name='delimg' style="float: right" onclick="return confirm('Are you sure you want to delete this image?')">Delect image</a>
                     <?php } ?>
-                    <a   href="<?php echo  $image['image_name']; ?>"><img class = "profilePic" src="<?php echo $image['image_name']; ?>"/>
+                    <a   href="<?php echo  $image['image_name']; ?>"><img class = "pictures" src="<?php echo $image['image_name']; ?>"/>
                     </a>
                     <?php
                         if ($run_bool == 0){
                     ?>
-                      <a href="likes.php?usersimage=<?php echo $image['id']?>"><img src="likes.png"  height="30" width="30"/></a>
+                      <a href="likes.php?usersimage=<?php echo $image['id']?>"><img src="likes.png"  height="40vh" width="50vw"/></a>
                     <?php }else{ ?>
-                    <a href="likes.php?usersimage=<?php echo $image['id']?>"><img src="likes.png" height="30" width="30" class="grey"/></a>
+                    <a href="likes.php?usersimage=<?php echo $image['id']?>"><img src="likes.png" height="40vh" width="50vw" class="black"/></a>
                     <?php }?>
                     
                     <p class="lik" value='image' name='image'><?php echo $likes;?></p>
@@ -101,12 +98,11 @@ foreach($images as $image)
                           <input type='hidden' name='username' value='$username'>
                           <input type='hidden' name='email' value='$email'>
                           <input type='hidden' name='date' value='".date('Y-m-d H:i:s')."'><br>
-                          <button type='submit' name='commentsave' class = 'dropbtn'>Comment</button>
+                          <button type='submit' name='commentsave' >Comment</button>
                         </form>"."<br>";
 
-                           
-    
-                            echo  "<div class='comDiv'>";  
+
+                            echo  "<div class='sepComments'>";  
                                 $stmt = ("SELECT * FROM comments WHERE post_id = {$image['id']};");
                                 $stmt = $conn->prepare($stmt);
                                 $stmt->execute();
@@ -114,16 +110,20 @@ foreach($images as $image)
 
                                 foreach($com as $comment)
                                 {
-                                    echo "<div class='comBox'>";
+                                    echo "<div class='commentbox'>";
                                     echo $comment['username']." ";
                                     echo $image['id']." ";
                                     echo $comment['date']."<br>";
                                     echo htmlspecialchars($comment['commentimg']);
                                 echo "</div>"."<br>";
                                 }
-                        echo "</div>";
+                            echo "</div>";
                     ?>
             </div>
+
+<?php
+}
+?>
 
             <script>
             function add1(element) {
@@ -148,14 +148,11 @@ foreach($images as $image)
                 x.classList.toggle("like.png");
             }
         </script>
-
+     
+</div>
 </BODY>
 
 </HTML>
-
 <?php
-}
-echo "<a href=\"home.php\">Back to the homepage</a>";
+echo "<a href=\"home.php\">Back to the homepage</a>"; 
 ?>
-
-

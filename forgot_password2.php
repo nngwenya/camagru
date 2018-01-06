@@ -71,10 +71,11 @@ if (isset($_POST['submit'])) {
         $ms.="<html></body><div><div>Dear ".$username.",</div></br></br>";
         $ms.="<div style='padding-top:8px;'>If this e-mail does not apply to you please ignore it. It appears that you have requested a password reset, Please click the following link For verifying and reset your password,.</div>
         <br>\n\nYour username : ".$username.".\r\n<br>
-        \n\nNew password : ".$password.".
-         http://localhost:8080/camagru/forgot_password2.php<div>
+        \n\nNew password : ".$password.".<br><br>\r\n
+        Copy the link:\r\n
+         http://localhost:8080/camagru/forgot_password1.php
 
-       <br>Thank you for registering with us.<br>
+       <br>Thank you.<br>
           
             </div>
             </body></html>";
