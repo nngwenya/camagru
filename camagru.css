@@ -81,8 +81,8 @@
 
 .booth {
     float: left;
-    width: 40vw;
-    height: 67vh;
+    width: 42vw;
+    height: 65vh;
     background-color: #FFE4E1;
     border: solid powderblue;
     margin: 2%;
@@ -211,10 +211,11 @@ section {
 }
 
 .pictures {
-    padding-left: 0px;
+    padding-left: 0%;
     width: 20vw;
+    height: 28vh;
     /* box-shadow: 0px 0px 20px #cecece; */
-    margin: 10px;
+    margin: 3%;
 }
 
 .black {

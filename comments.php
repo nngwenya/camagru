@@ -1,6 +1,7 @@
 <?php
 include_once 'config/database.php';
 include_once 'config/session.php';
+include_once 'config/utilities.php';
 include_once 'mygallary.php';
 
 

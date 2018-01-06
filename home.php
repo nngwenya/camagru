@@ -5,85 +5,80 @@ include_once 'config/session.php';
 if (isset($_SESSION['username']))
 header('location : home.php');
 
-try{
-    if (isset($_POST['image'])){
-$fileName = basename($_FILES["image"]["name"]);
-$target_path = "pictures/".$fileName;
-if (file_exists($target_path))
-{
-    echo "An image with that file name already exists.";
-}
-elseif (move_uploaded_file($_FILES["user_image"]["tmp_name"], $target_path))
-{
-    // The file is in the images/gallery folder. Insert record into database by
-    // executing the following query:
-    // INSERT INTO images
-    // (data_type, title, file_name) VALUES('$dataType','$title','$fileName')
+try {
+    if (isset($_POST['image-url']))
+    {
+        $overlay = $_POST['watermark'];
+        $img = $_POST['image-url'];
+        $rand = rand(0, 9999);
+        $file_dir = "images/";
+        $file_name = $_SESSION['username'].$rand.".jpg";
+        $img = explode(',', $img);
+        $decoded = base64_decode($img[1]);
+        file_put_contents($file_dir.$file_name, $decoded);      
 
-    $sqlInsert = "INSERT INTO usersimage (id, image_name, username, edit_time)
-    VALUES ( null, '$fileName', '$username', now())";
+        $watermark = imagecreatefrompng($overlay);
+        $watermark_width = imagesx($watermark);
+        $watermark_height = imagesy($watermark);
+        $image = imagecreatefromjpeg($file_dir.$file_name);
+        imagecopy($image, $watermark, -5, 0, 40, 40, $watermark_width, $watermark_height); 
+        imagejpeg($image, $file_dir.$file_name);
+        imagedestroy($image);
+        imagedestroy($watermark);
+
+        $filepath = $file_dir.$file_name;
+        $username = $_SESSION['username'];
+
+        $insert = "INSERT usersimage (id, image_name, username, edit_time)
+            VALUE (null, '$filepath', '$username', now())";
     
-     $stmt = $conn->prepare($sqlInsert);
-     //$stmt->bindParam(':username', $username);
-     $stmt->execute();
-
-    echo "The image was successfully uploaded and added to the gallery :)";
+        $stmt = $conn->prepare($insert);
+        $stmt->execute();
+        $result = "<p style='padding: 20px; color: green;'>Image is saved!</p>";
+    }
 }
-}
-else
-{
-    echo "There was an error uploading the file, please try again!";
-}
+catch(PDOException $ex){
+    echo $insert ."<br>". $ex->getMessage();
 }
 
-// $overlay = isset($_POST['watermark']) ? $_POST['watermark'] : '';
-// $decoded = isset($img[1]) ? $img[1] : null;
-// $img_file = isset($_FILES['user_image']["name"]) ? $_FILES['user_image']["name"] : null;
-// try{
-// if (isset($_POST['image-url']))
-// {
- 
-//     $img = $_POST['image-url'];
-//     $rand = rand(0, 9999);
-//     $file_dir = "images/";
-//     $file_name = $_SESSION['username'].$rand.".jpg";
-//     $img = explode(',', $img);
-//     $decoded = base64_decode($img[1]);
-//     file_put_contents($file_dir.$file_name, $decoded);
-//     $filepath = $file_dir.$file_name;
-//     $username = $_SESSION['username'];
-
-//    // $overlay = isset($_POST['watermark']) ? $_POST['watermark'] : '';
-//     $overlay = $_POST['watermark'];
-//     $watermark = imagecreatefrompng($overlay);
-//     $watermark_width = imagesx($watermark);
-//     $watermark_height = imagesy($watermark);
-//     $image = imagecreatefromjpeg($file_dir.$file_name);
-//     $size = getimagesize($file_dir.$file_name );
-//     imagecopy($image, $watermark, -5, 0, 40, 40, $watermark_width, $watermark_height);
-//     imagejpeg($image, $file_dir.$file_name);
-//     imagedestroy($image);
-//     imagedestroy($watermark);
-
-//     $sqlInsert = "INSERT INTO usersimage (id, image_name, username, edit_time)
-//     VALUES ( null, '$filepath', '$username', now())";
+if(isset($_POST['submit'])) {
+    $username = $_SESSION['username'];
+    $file = $_FILES['file'];
+      
+    $fileName = $_FILES['file']['name'];
+    $fileTmpName = $_FILES['file']['tmp_name'];
+    $fileSize = $_FILES['file']['size'];
+    $fileError = $_FILES['file']['error'];
+    $fileType = $_FILES['file']['type'];
     
-//      $stmt = $conn->prepare($sqlInsert);
-//      //$stmt->bindParam(':username', $username);
-//      $stmt->execute();
-  
-//    echo "image saved succssfully";
-//     }
-//     else
-//     {
-//     echo "the image is not saved";
-//     }
-// }
-
-catch(PDOException $ex)
-{
-    echo $sqlInsert . "<br>" . $ex->getMessage();
-}
+    $fileExt = explode('.', $fileName);
+    $fileActualExt = strtolower(end($fileExt));
+    
+    $allowed = array('jpg', 'jpeg', 'png');
+    
+    if (in_array($fileActualExt, $allowed)) {
+        if ($fileError === 0) {
+            if($fileSize < 1000000) {
+                $fileNameNew = uniqid('', true).".".$fileActualExt; 
+                $fileDestination = 'images/'.$fileNameNew;
+                move_uploaded_file($fileTmpName, $fileDestination);
+                var_dump($fileDestination);
+                $insert_query="INSERT INTO usersimage (image_name, username) VALUES('$fileDestination', '$username')";
+                $conn->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+                $stmt = $conn->prepare($insert_query);
+                $stmt->execute();
+                $result = "<p style='padding: 20px; color: green;'>Upload was successful!</p>";
+            }else {
+                $result = "<p style='padding: 20px; color: red;'>You have chosen a file of large size!</p>";
+            }  
+        }else {
+          $result =  "<p style='padding: 20px; color: red;'>There was an error while uploading your file!</p>"; 
+        }
+    }else {
+        $result =  "<p style='padding: 20px; color: red;'>You have choosen an invaild file type!</p>";
+    }
+    
+} 
 
 ?>
 
@@ -134,25 +129,28 @@ catch(PDOException $ex)
                 <input type="hidden"  id="image-url" name="image-url" value="" />
                 <input type="hidden" name="watermark" id="watermark" value="" />
                 <button class="btn btn-default" id="save_image">Save to Gallery</button><br> 
+            </form>
+              
+            <form action="" method="POST" enctype="multipart/form-data">
+                    <input type="file" name="file" style = "display: inline-block;" accept="images/*" >
+                    <input type='hidden' name='username' value="$username">
+                    <button type="submit" name="submit" id="save-image" class = "dropbtn" style = "display: inline-block;">Upload</button>
+            </form>
+            <form method="post" id="image-form">
+                <input type="hidden" name="image-url" id="image-url" value="" />
+                <input type="hidden" name="watermark" id="watermark" value="" />
+            </form>
 
-
-
-                <form enctype="multipart/form-data" action="uploader.php" method="POST">
-                Image to upload: <input type="file" name="image"><br>
-                <button type="submit" value="">upload</button>
-                </form>
-
-                <!-- <input class="input-group" type="file" name="user_image" accept="image/*" /><br>
-                <button type="submit" name="btnsave" value="" class="btn btn-default">save</button> -->
+              
 
                 <div class="dropdown">
                         <button class="dropbtn">frames</button>
                         <div class="dropdown-content">
                         <a href="#" id="hearts">hearts</a>
-                        <a href="#" id="blue">blue</a>
-                        <a href="#" id="goofy">goofy</a>
-                        <a href="#" id="painter">painter</a>
-                        <a href="#" id="no_women">no_women</a>
+                        <a href="#" id="bird">bird</a>
+                        <a href="#" id="kitty">kitty</a>
+                        <a href="#" id="umbrella">umbrella</a>
+                        <a href="#" id="flower">flower</a>
                         </div>
 
             </form>
@@ -196,21 +194,21 @@ document.getElementById('hearts').addEventListener("click", function(){
     alert('Hearts Selected');
     curr_object[0] = "hearts.png";
 });
- document.getElementById('goofy').addEventListener("click", function(){
-    alert('Goofy Selected');
-    curr_object[0] = "goofy.png";
+ document.getElementById('kitty').addEventListener("click", function(){
+    alert('kitty Selected');
+    curr_object[0] = "kitty.png";
 });
-document.getElementById('painter').addEventListener("click", function(){
-    alert('painter Selected');
-    curr_object[0] = "painter.png";
+document.getElementById('umbrella').addEventListener("click", function(){
+    alert('umbrella Selected');
+    curr_object[0] = "umbrella.png";
 });
-document.getElementById('blue').addEventListener("click", function(){
-    alert('blue Selected');
-    curr_object[0] = "blue.png";
+document.getElementById('bird').addEventListener("click", function(){
+    alert('bird Selected');
+    curr_object[0] = "bird.png";
 });
-document.getElementById('no_women').addEventListener("click", function(){
-    alert('no_women Selected');
-    curr_object[0] = "no_women.png";
+document.getElementById('flower').addEventListener("click", function(){
+    alert('flower Selected');
+    curr_object[0] = "flower.png";
 });
 window.onload = function() {
 var c = document.getElementById('canvas');

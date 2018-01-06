@@ -1,8 +1,8 @@
 
 <?php 
-
-require_once ('comments.php');
-require_once ('config/database.php');
+include_once 'delete.php';
+include_once 'comments.php';
+include_once 'config/database.php';
 
 
 ?>
@@ -24,7 +24,7 @@ require_once ('config/database.php');
     <header>
             <i class="material-icons" style="font-size:50px">camera</i>
             <div class="material-icons header"><h1>CAMAGRU</h1></div>   
-            <button class="logout" onclick="window.location.href='mygallary.php'" >LogOut</button>  
+            <button class="logout" onclick="window.location.href='index.php'" >LogOut</button>  
 <div class="content" style="font-size:30px">
             <center><HEADER>WELCOME TO MY GALLARY</HEADER></center> </div>
           
@@ -67,7 +67,7 @@ foreach($images as $image)
            <div class=image_border>
                     <?php echo "Post by-".$image['username']?>
                     <?php if ($_SESSION['username'] == $image['username']) {?>
-                    <a class=del href="?delete_id=<?php echo $image['image_name']?>" action="delete.php" type='submit' name='delimg' style="float: right" onclick="return confirm('Are you sure you want to delete this image?')">Delect image</a>
+                    <a class=del href="?delete_id=<?php echo $image['image_name']?>" action="" type='submit' name='delimg' style="float: right" onclick="return confirm('Are you sure you want to delete this image?')">Delect image</a>
                     <?php } ?>
                     <a   href="<?php echo  $image['image_name']; ?>"><img class = "pictures" src="<?php echo $image['image_name']; ?>"/>
                     </a>

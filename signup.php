@@ -147,6 +147,4 @@ include_once 'config/utilities.php';
             
            
 </BODY>
-              <!-- <div class="footer">
-                  <p><i>Copyright &copy; nngwenya 2017.All rights reserved.</i></p></div> -->
 </HTML>

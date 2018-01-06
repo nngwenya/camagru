@@ -1,48 +1,73 @@
 <?php
 include_once 'config/database.php';
 include_once 'config/session.php';
+include_once 'config/utilities.php';
 
-// $password = '';
-// $firstname = '';
-// $lasttname = '';
-// $username = '';
-// $email = '';
-if (isset($_POST["btnsave"]))
-{
-    $img_file = $_FILES["user_image"]["name"];
-    $validext = array("jpg", "png", "bmp", "gif");
 
-    if($img_file == " ")
-        echo "please attach an image";
-    else if ($_FILES["user_image"]["size"] <= 0)
-        echo "no image found";
 
-    else if (!in_array("jpg", $validext))
-        echo "invalid type";
-    else
-    { 
-    
-        $img_file = $_FILES["user_image"]["name"];
-        $foldername = 'pictures/';
-        $ext = pathinfo($img_file, PATHINFO_EXTENSION);
-        $file_name = rand(10000, 990000). '-'. time() .'.'.$ext;
-        $filepath = $foldername.$file_name;
-        if (move_uploaded_file($_FILES["user_image"]["tmp_name"], $filepath))
-       
+if (isset($_POST['save']) && isset($_SESSION['username'])){
+        
+    $form_errors = array();
+    $required_fields = array('firstname', 'lastname', 'email', 'username', 'password', 'country');
+    $form_errors = array_merge($form_errors, check_empty_fields($required_fields));
+    $fields_to_check_length = array('username' => 4, 'password' => 6);
+    $form_errors = array_merge($form_errors, check_min_length($fields_to_check_length));
+    $form_errors = array_merge($form_errors, check_email($_POST));
 
-        {
-       
-         $sqlInsert = ("UPDATE users SET profile_image='$filepath' WHERE username=':username'");
-         
-         $stmt = $conn->prepare($sqlInsert);
-         $stmt->bindParam(':username', $username);
-         $stmt->execute();
-      
-        echo "image uploaded succssfully";
+    if (empty($form_errors)){
+        
+        $id = $_SESSION['id'];
+        $firstname = htmlEntities($_POST['fisrtname']);
+        $lastname = htmlEntities($_POST['lastname']);
+        $username = htmlEntities($_POST['username']);
+        $email = htmlEntities($_POST['email']);
+        $password = htmlEntities($_POST['password']);
+        $country = htmlEntities($_POST['country']);
+        $email_pref = "true";
+        if (isset($_POST['email_pref'])){
+            $email_pref = "false";
         }
-else
-        echo "the image could not upload";
-}
+        $hashed_password = password_hash($password, PASSWORD_BCRYPT);
+
+        try{
+    
+            $stmt = $conn->prepare('UPDATE users SET firstname = :firstname, lastname = :lastname, username = :username, email = :email, email_pref = :email_pref,  password = :hashed_password ,country = :country WHERE id = :id');
+            $stmt->bindParam(':firstname',$firstname);
+            $stmt->bindParam(':lastname',$lastname);
+            $stmt->bindParam(':username',$username);
+            $stmt->bindParam(':email',$email);
+            $stmt->bindParam(':email_pref', $email_pref);
+            $stmt->bindParam(':hashed_password',$hashed_password);
+            $stmt->bindParam(':country',$country);
+            $stmt->bindParam(':id',$id);
+            $stmt->execute();
+            
+            $mailbody = '
+            Changes were Made to your account!
+            
+            Your account has been updated, you can login with the following new credentials.
+            ------------------------
+            Username: '.$username.'
+            Password: '.$password.'   
+            ------------------------
+
+            Thank you!';
+
+            mail("$email", "www.noreply@camagru.com - Account updated", $mailbody);
+
+            $result = "<p style='padding: 20px; color: green;'>Account was successfully updated!</p>";
+        
+        }catch (PDOException $ex){
+            $result = "<p style='padding: 20px; color: red'>An error occurred: ".$ex->getMessage()." </p>";
+        }
+    }
+    else{
+        if(count($form_errors) == 1){
+            $result = "<p style='color: red;'> There was 1 error in the form<br>";
+        }else{
+            $result = "<p style='color: red;'> There were " .count($form_errors). " error in the form <br>";
+        }
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -71,17 +96,20 @@ else
     </div>
 
 </br>
-  <div class="phoneimg">
+  <!-- <div class="phoneimg">
     <img src="https://ting.com/wp-content/uploads/Android-Guest-Mode-GIF04.gif"></div>
- 
+  -->
 
 <div class="container1">
-<div class="head1"><h1>MY ACCOUNT</h1></div>
+<div class="head1"><h1>EDIT ACCOUNT</h1></div>
+
 <center><form method="POST" enctype="multipart/form-data" class="form-horizontal" action"">
+
      
  <table class="table table-bordered table-responsive">
  
     <tr>
+    <P>If you wish to make any changes on your account,<br>please fill in the necessary information below</p>
      <td><label class="control-label">firstname:</label></td>
         <td><input class="form-control" type="text" name="firstname" placeholder="firstname" value="" /></td>
     </tr>
@@ -109,106 +137,57 @@ else
     <tr>
      <td><label class="control-label">country:</label></td>
         <td><input class="form-control" type="text" name="country" placeholder="country" value="" /></td>
+</tr><br></br>
+   <tr>
+    <td><input type="checkbox" name="email_pref" value="Notify" style="height: 1.5vh; width: 1.5vw;">Do not send me emails</br></br></td>
     </tr>
+    <tr>
+            
 
-    <tr>
-     <td><label class="control-label">Profile Img.</label></td>
-        <td><input class="input-group" type="file" name="user_image" accept="image/*" /></td>
-    </tr> 
-    
-    <tr>
-    <td colspan="2"><button type="submit" name="btnsave" value="btnsave" class="btn btn-default">
-    <span class="glyphicon glyphicon-save"></span> &nbsp; save
-        </button>
-        </td>
-    </tr>
-    
+</tr>
     </table>
     
+    <button type="submit" name="save" value="save">Save</button>
 </form></center>
 <center><p>deactivate my account <a style='color: pink; font-size:30px;'  value="deactivate" name="deactivate" onclick="window.location.href='index.php'" class="  fa fa-close" href='#'></i></a></center>
 </div>  
 
-<?php
 
-
-try{
-    // $firstname= $_POST['firstname'];
-    // $lastname = $_POST['lastname'];
-    // $usern = $_POST['username'];
-    // $email = $_POST['email'];
-    // $password = $_POST['password'];
-    // //$country = $_POST['country'];
-    // $username = $_SESSION['username'];
-
-     $hashed_password = password_hash($password, PASSWORD_BCRYPT);
-        
-
-
-    $sqlInsert = ("UPDATE users SET firstname=':firstname', lastname=':lastname', username=':username', email=':email', password=':hashed_password', country=':country'  WHERE id=':id'");
-            
-    $stmt = $conn->prepare($sqlInsert);
-    $stmt->bindParam(':firstname', $firstname);
-    $stmt->bindParam(':lastname', $lastname);
-    $stmt->bindParam(':username', $username);
-    $stmt->bindParam(':email', $email);
-    $stmt->bindParam(':hashed_password', $hashed_password);
-    $stmt->bindParam(':country', $country);
-    $stmt->bindParam(':id', $id);
-    $stmt->execute();
-
-    echo "update was succssfully";
-}
-catch (PDOException $ex) 
-{
-    echo $sqlInsert.'<br>'.$ex->getMessage();
-    echo "update failed";
-}
-
-
-?>
-
-<?php
- 
- $stmt = $conn->prepare("SELECT profile_image, username, email FROM users WHERE username LIKE :user");
- $stmt->bindParam(":user",$_SESSION['username']);
- $stmt->execute();
-
-
-
- if($stmt->rowCount() > 0)
- {
-  while($row=$stmt->fetch(PDO::FETCH_ASSOC))
-  {
-    
-    extract($row);
-   ?>
 <div class="profile">
-<center><p class="page-header"><?php echo $username."&nbsp;/&nbsp;".$email; ?></p>
-       
-        <img src='<?php echo $filepath;?>' class="img-rounded" width="250px" height="300px"/>
-        <p class="page-header">
-        <span>
-    <a class="usersimage" href="mygallary.php?edit_id=<?php echo $row['username']; ?>" title="click for edit" onclick="return confirm('sure to edit ?')"><span class="glyphicon glyphicon-edit"></span> Edit</a> 
-    <a class="usersimage" href="?delete_id=<?php echo $row['username']; ?>" title="click for delete" onclick="return confirm('sure to delete ?')"><span class="glyphicon glyphicon-remove-circle"></span> Delete</a>
-    </span>
-    </p></center>
-    </div>
-    <?php
-  }
- }
- else
- {
-  ?>
-        <div class="col-xs-1">
-         <div class="alert alert-warning">
-             <span class="glyphicon glyphicon-info-sign"></span> &nbsp; No Data Found ...
-            </div>
-        </div>
-        <?php
- }
+<div class="head1"><h1>PERSONAL DETAILS</h1></div>
+<?php if(isset($result)) echo "<b>$result <b>" ?>
+<?php if(!empty($form_errors)) echo show_errors($form_errors); ?>
+<?php
+    $query = "SELECT firstname, lastname, username, email, country FROM users WHERE username = '".$_SESSION['username']."' ";
 
- ?>
+    try
+    {
+        $stmt = $conn->prepare($query);
+        $stmt->execute();
+    }
+    catch(PDOException $ex)
+    {
+        die("Failed to run query: " . $ex->getMessage());
+    }
+    $rows = $stmt->fetchAll();
+?>
+</tr>
+<?php foreach($rows as $row): ?>
+<tr>
+    <td><?php echo "First Name:" ?></td></br>
+    <td><?php echo htmlentities($row['firstname'], ENT_QUOTES, 'UTF-8'); ?></td></br></br>
+    <td><?php echo "Last Name:" ?></td></br>
+    <td><?php echo htmlentities($row['lastname'], ENT_QUOTES, 'UTF-8'); ?></td></br></br>
+    <td><?php echo "Username:" ?></td></br>
+    <td><?php echo htmlentities($row['username'], ENT_QUOTES, 'UTF-8'); ?></td></br></br>
+    <td><?php echo "Email:" ?></td></br>
+    <td><?php echo htmlentities($row['email'], ENT_QUOTES, 'UTF-8'); ?></td></br></br>
+    <td><?php echo "Country:" ?></td></br>
+    <td><?php echo htmlentities($row['country'], ENT_QUOTES, 'UTF-8'); ?></td></br></br>
+</tr></br>
+<?php endforeach; ?>
+</div></br>
+
 
 
 </div>
